@@ -1,0 +1,13 @@
+.git
+.agents
+.codex
+.deploy-cli
+.cache
+.localappdata*
+.localdeps
+.pnpm-*
+data
+scripts
+.env
+.env.example
+README.md
