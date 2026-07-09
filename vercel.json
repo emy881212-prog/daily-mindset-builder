@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "server.js": {
+      "includeFiles": "{index.html,app.js,styles.css}"
+    },
+    "api/index.js": {
+      "includeFiles": "{index.html,app.js,styles.css}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
+    { "source": "/daily-mindset-builder/:path*", "destination": "/api/index" },
+    { "source": "/", "destination": "/api/index" }
+  ]
+}
