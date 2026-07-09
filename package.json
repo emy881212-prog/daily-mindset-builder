@@ -1,0 +1,18 @@
+{
+  "name": "daily-mindset-builder",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "description": "Personalized wellness app with secure PayPal subscriptions",
+  "scripts": {
+    "start": "node server.js",
+    "paypal:setup-plans": "node scripts/setup-paypal-plans.js",
+    "check": "node --check app.js && node --check server.js && node --check scripts/setup-paypal-plans.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.0.0"
+  }
+}
