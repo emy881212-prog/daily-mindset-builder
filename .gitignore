@@ -1,0 +1,14 @@
+.env
+data/
+*.log
+.DS_Store
+.cache/
+.localappdata*/
+.localdeps/
+.pnpm-*/
+.deploy-cli/
+node_modules/
+
+.vercel
+*.zip
+_safe_source_stage*/
