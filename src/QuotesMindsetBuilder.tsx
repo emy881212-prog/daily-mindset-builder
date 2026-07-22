@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import {
   Archive,
+  ArrowLeft,
   ArrowRight,
   Backpack,
   BarChart3,
@@ -52,6 +53,7 @@ type Section =
   | 'mood'
   | 'farm'
   | 'map'
+  | 'destination'
   | 'inventory'
   | 'upgrades'
   | 'store'
@@ -129,6 +131,21 @@ interface ToastState {
 
 const STORAGE_KEY = 'quotes-mindset-builder-v1';
 const OWNER_PREVIEW_KEY = 'quotes-mindset-builder-owner-preview-v1';
+
+const worldLocations = [
+  { id: 'farm', name: 'Sunny Farm', level: 1, position: '26% 22%', eyebrow: 'THE HEART OF YOUR GARDEN', tagline: 'A warm beginning where every reflection becomes something you can grow.', story: 'Lantern paths, orchard trees and four familiar garden beds welcome you home.', landmark: 'The Moonlit Cottage', activity: 'Plant, water, grow and harvest' },
+  { id: 'forest', name: 'Forest Garden', level: 2, position: '75% 22%', eyebrow: 'EVERGREEN SANCTUARY', tagline: 'Follow the lanterns beneath ancient pines and listen for the quiet between the leaves.', story: 'A hidden woodland garden rests under a canopy of silver-green branches and firefly light.', landmark: 'Whispering Pine Circle', activity: 'Take a mindful forest walk' },
+  { id: 'orchard', name: 'Orchard', level: 3, position: '50% 36%', eyebrow: 'GOLDEN FRUIT GROVE', tagline: 'Wander through citrus trees glowing like tiny suns in the evening blue.', story: 'Sweet fruit, wooden ladders and winding paths make this orchard feel generous in every season.', landmark: 'The Golden Orange Tree', activity: 'Gather a basket of gratitude' },
+  { id: 'lavender', name: 'Lavender Meadow', level: 4, position: '24% 47%', eyebrow: 'FIELD OF CALM', tagline: 'Breathe with the lavender rows as the windmill turns slowly above the flowers.', story: 'Purple fields roll toward the horizon, carrying a soft fragrance through the moonlit air.', landmark: 'Lavender Windmill', activity: 'Pause for three gentle breaths' },
+  { id: 'crystal', name: 'Crystal Falls', level: 5, position: '76% 48%', eyebrow: 'WATERFALL HAVEN', tagline: 'Clear water tumbles over luminous stone into pools bright enough to hold the stars.', story: 'Mossy bridges and sparkling cascades create a peaceful refuge beside the garden world.', landmark: 'The Three Crystal Falls', activity: 'Release one heavy thought' },
+  { id: 'village', name: 'Moonlit Village', level: 6, position: '50% 61%', eyebrow: 'LANTERN VILLAGE', tagline: 'Walk warm cobblestone lanes where every window offers a little light.', story: 'Gardeners, makers and dreamers have built a cozy village around a flowering central square.', landmark: 'The Wishing Well', activity: 'Leave a kind intention' },
+  { id: 'greenhouse', name: 'Greenhouse', level: 7, position: '23% 73%', eyebrow: 'GLASSHOUSE GARDEN', tagline: 'Step into a glowing sanctuary where rare plants thrive beneath curved glass.', story: 'Warm mist, climbing vines and delicate seedlings fill this peaceful botanical retreat.', landmark: 'The Starlight Conservatory', activity: 'Discover a rare seedling' },
+  { id: 'sunflower', name: 'Sunflower Hills', level: 8, position: '50% 79%', eyebrow: 'HILLS OF HOPE', tagline: 'Climb through bright spirals of sunflowers all turning toward tomorrow.', story: 'Golden petals trace joyful paths across gentle hills under the deep blue sky.', landmark: 'The Sunflower Spiral', activity: 'Name one hopeful thing' },
+  { id: 'lake', name: 'Cozy Lake', level: 9, position: '77% 76%', eyebrow: 'WILLOW WATERS', tagline: 'Rest beside still water beneath an old willow draped in tiny lantern lights.', story: 'A quiet dock, soft reeds and a hidden cascade make the lake a place to simply be.', landmark: 'The Lantern Willow', activity: 'Sit beside the water' },
+  { id: 'cove', name: 'Starlight Cove', level: 10, position: '42% 94%', eyebrow: 'EDGE OF THE STARS', tagline: 'Reach the final shore where the lighthouse guides every dream safely home.', story: 'A secluded island cove glows with moonlit sand, wildflowers and a faithful beacon.', landmark: 'The Starlight Lighthouse', activity: 'Reflect on how far you have grown' },
+] as const;
+
+type WorldLocationId = typeof worldLocations[number]['id'];
 
 const quotes: QuoteItem[] = [
   { id: 'g1', category: 'Gratitude', text: 'The quiet things you notice become the life you remember.', author: 'Mira Sol' },
@@ -277,6 +294,7 @@ function QuotesMindsetBuilder() {
   const [selectedMood, setSelectedMood] = useState<MoodKey | null>(null);
   const [moodNote, setMoodNote] = useState('');
   const [ownerPreview, setOwnerPreview] = useState(() => localStorage.getItem(OWNER_PREVIEW_KEY) === 'true');
+  const [activeWorldId, setActiveWorldId] = useState<WorldLocationId>('forest');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -315,6 +333,7 @@ function QuotesMindsetBuilder() {
   const backpackCapacity = 8 + state.upgrades.backpack * 4;
   const readyCrops = state.plots.slice(0, 4).filter((plot) => getPhase(plot, now, growthDuration) === 'ready').length;
   const wateredCrops = state.plots.slice(0, 4).filter((plot) => ['watered', 'sprout', 'growing'].includes(getPhase(plot, now, growthDuration))).length;
+  const activeWorld = worldLocations.find((world) => world.id === activeWorldId) ?? worldLocations[1];
 
   const visibleQuotes = useMemo(
     () => (quoteFilter === 'All' ? quotes : quotes.filter((item) => item.category === quoteFilter)),
@@ -333,6 +352,15 @@ function QuotesMindsetBuilder() {
     localStorage.removeItem(OWNER_PREVIEW_KEY);
     setOwnerPreview(false);
     notify('Owner Preview ended. Standard map locks restored.', 'notice');
+  };
+
+  const enterWorld = (worldId: WorldLocationId) => {
+    if (worldId === 'farm') {
+      navigate('farm');
+      return;
+    }
+    setActiveWorldId(worldId);
+    navigate('destination');
   };
 
   const saveJournal = () => {
@@ -489,6 +517,7 @@ function QuotesMindsetBuilder() {
     mood: { eyebrow: 'EMOTIONAL WEATHER', title: 'How are you feeling?', subtitle: 'No fixing required. Simply notice what is here.' },
     farm: { eyebrow: 'MINDFUL FARM', title: 'Your moonlit garden', subtitle: 'Plant what your reflections earn, then care for it slowly.' },
     map: { eyebrow: 'WORLD MAP · UNLOCKS', title: 'Explore your growing world', subtitle: 'Keep reflecting and caring for your garden to discover new places.' },
+    destination: { eyebrow: activeWorld.eyebrow, title: activeWorld.name, subtitle: activeWorld.tagline },
     inventory: { eyebrow: 'COLLECTION', title: 'Farm inventory', subtitle: 'Everything you have grown, found and equipped.' },
     upgrades: { eyebrow: 'GROW WITH EASE', title: 'Farm upgrades', subtitle: 'Use earned coins to make caring for your garden smoother.' },
     store: { eyebrow: 'COZY MARKET', title: 'Farm store', subtitle: 'Use demo coins for seeds, space and a little beauty.' },
@@ -704,24 +733,34 @@ function QuotesMindsetBuilder() {
             <section className={'world-map-card glass-card' + (ownerPreview ? ' owner-preview' : '')} aria-label="World map with ten garden destinations">
               <img className="world-map-art" src="./resources/world-map-v2.jpg" alt="Moonlit world map with ten garden destinations connected by glowing paths" draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map-v2.jpg'; }} />
               <div className="world-map-shade" />
-              {[
-                { id: 'farm', name: 'Sunny Farm', level: 1 },
-                { id: 'forest', name: 'Forest Garden', level: 2 },
-                { id: 'orchard', name: 'Orchard', level: 3 },
-                { id: 'lavender', name: 'Lavender Meadow', level: 4 },
-                { id: 'crystal', name: 'Crystal Falls', level: 5 },
-                { id: 'village', name: 'Moonlit Village', level: 6 },
-                { id: 'greenhouse', name: 'Greenhouse', level: 7 },
-                { id: 'sunflower', name: 'Sunflower Hills', level: 8 },
-                { id: 'lake', name: 'Cozy Lake', level: 9 },
-                { id: 'cove', name: 'Starlight Cove', level: 10 },
-              ].map((world) => {
-                const unlocked = world.id === 'farm' || ownerPreview;
+              {worldLocations.map((world) => {
+                const unlocked = world.level <= farmLevel || ownerPreview;
                 const isFarm = world.id === 'farm';
-                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => isFarm ? navigate('farm') : ownerPreview ? notify(world.name + ' selected in Owner Preview.') : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={isFarm ? 'Open ' + world.name : ownerPreview ? 'Preview ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? (isFarm ? <Sprout size={17} /> : <Check size={15} />) : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{isFarm ? 'Unlocked · Enter' : ownerPreview ? 'Owner Preview · Select' : 'Farm Level ' + world.level}</small></span></button>;
+                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? enterWorld(world.id) : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Enter ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? (isFarm ? <Sprout size={17} /> : <Check size={15} />) : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{isFarm ? 'Unlocked · Enter' : ownerPreview ? 'Owner Preview · Enter' : 'Unlocked · Enter'}</small></span></button>;
               })}
-              <div className="world-map-note"><Sparkles size={15} /><span>{ownerPreview ? 'Owner Preview is active. Every destination is available for testing.' : 'Keep growing, keep reflecting, and the world will open to you.'}</span></div>
+              <div className="world-map-note"><Sparkles size={15} /><span>{ownerPreview ? 'Owner Preview is active. Enter every destination to test it.' : 'Keep growing, keep reflecting, and the world will open to you.'}</span></div>
             </section>
+          </div>
+        )}
+
+        {section === 'destination' && (
+          <div className={'destination-page destination-' + activeWorld.id}>
+            <section className="destination-hero glass-card" aria-label={activeWorld.name + ' location'}>
+              <img src="./resources/world-map-v2.jpg" alt={activeWorld.name + ' moonlit scenery'} style={{ objectPosition: activeWorld.position }} draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map-v2.jpg'; }} />
+              <div className="destination-vignette" />
+              <button className="destination-back" onClick={() => navigate('map')} aria-label={'Return to World Map from ' + activeWorld.name}><ArrowLeft size={16} /> World Map</button>
+              <div className="destination-arrival">
+                <span><Sparkles size={14} /> YOU ARRIVED</span>
+                <h2>{activeWorld.name}</h2>
+                <p>{activeWorld.story}</p>
+                <div><b>Farm Level {activeWorld.level}</b>{ownerPreview && <b><Crown size={12} /> Owner Preview</b>}</div>
+              </div>
+            </section>
+            <section className="destination-details" aria-label={activeWorld.name + ' guide'}>
+              <article className="destination-detail glass-card"><span className="soft-icon"><Star size={20} /></span><div><small>SIGNATURE LANDMARK</small><strong>{activeWorld.landmark}</strong><p>Look around, slow down, and take in what makes this place unique.</p></div></article>
+              <article className="destination-detail glass-card"><span className="soft-icon"><Leaf size={20} /></span><div><small>MINDFUL ACTIVITY</small><strong>{activeWorld.activity}</strong><p>A gentle moment designed for this part of your growing world.</p></div></article>
+            </section>
+            <div className="destination-actions"><button onClick={() => notify(activeWorld.activity + ' · complete')}><Check size={16} /> Try this activity</button><button className="secondary" onClick={() => navigate('map')}><Map size={16} /> Explore another location</button></div>
           </div>
         )}
 
