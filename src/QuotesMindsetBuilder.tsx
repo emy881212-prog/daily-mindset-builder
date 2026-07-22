@@ -128,6 +128,7 @@ interface ToastState {
 }
 
 const STORAGE_KEY = 'quotes-mindset-builder-v1';
+const OWNER_PREVIEW_KEY = 'quotes-mindset-builder-owner-preview-v1';
 
 const quotes: QuoteItem[] = [
   { id: 'g1', category: 'Gratitude', text: 'The quiet things you notice become the life you remember.', author: 'Mira Sol' },
@@ -275,6 +276,7 @@ function QuotesMindsetBuilder() {
   const [journalText, setJournalText] = useState('');
   const [selectedMood, setSelectedMood] = useState<MoodKey | null>(null);
   const [moodNote, setMoodNote] = useState('');
+  const [ownerPreview, setOwnerPreview] = useState(() => localStorage.getItem(OWNER_PREVIEW_KEY) === 'true');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -290,6 +292,16 @@ function QuotesMindsetBuilder() {
     const timer = window.setTimeout(() => setToast(null), 3000);
     return () => window.clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('ownerPreview') !== 'enable') return;
+    localStorage.setItem(OWNER_PREVIEW_KEY, 'true');
+    setOwnerPreview(true);
+    setSection('map');
+    url.searchParams.delete('ownerPreview');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  }, []);
 
   const dayIndex = Math.floor(new Date(localDay()).getTime() / 86_400_000);
   const dailyQuote = quotes[Math.abs(dayIndex) % quotes.length];
@@ -315,6 +327,12 @@ function QuotesMindsetBuilder() {
     setSection(next);
     setMoreOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const endOwnerPreview = () => {
+    localStorage.removeItem(OWNER_PREVIEW_KEY);
+    setOwnerPreview(false);
+    notify('Owner Preview ended. Standard map locks restored.', 'notice');
   };
 
   const saveJournal = () => {
@@ -682,7 +700,8 @@ function QuotesMindsetBuilder() {
 
         {section === 'map' && (
           <div className="world-map-page">
-            <section className="world-map-card glass-card" aria-label="World map with ten garden destinations">
+            {ownerPreview && <section className="owner-preview-bar" aria-label="Owner Preview controls"><div><span className="soft-icon"><Crown size={19} /></span><span><strong>Owner Preview</strong><small>This browser only · normal visitors stay locked</small></span></div><button onClick={endOwnerPreview}><Lock size={15} /> End preview</button></section>}
+            <section className={'world-map-card glass-card' + (ownerPreview ? ' owner-preview' : '')} aria-label="World map with ten garden destinations">
               <img className="world-map-art" src="./resources/world-map-v2.jpg" alt="Moonlit world map with ten garden destinations connected by glowing paths" draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map-v2.jpg'; }} />
               <div className="world-map-shade" />
               {[
@@ -697,10 +716,11 @@ function QuotesMindsetBuilder() {
                 { id: 'lake', name: 'Cozy Lake', level: 9 },
                 { id: 'cove', name: 'Starlight Cove', level: 10 },
               ].map((world) => {
-                const unlocked = world.id === 'farm';
-                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? navigate('farm') : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Open ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? <Sprout size={17} /> : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{unlocked ? 'Unlocked · Enter' : 'Farm Level ' + world.level}</small></span></button>;
+                const unlocked = world.id === 'farm' || ownerPreview;
+                const isFarm = world.id === 'farm';
+                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => isFarm ? navigate('farm') : ownerPreview ? notify(world.name + ' selected in Owner Preview.') : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={isFarm ? 'Open ' + world.name : ownerPreview ? 'Preview ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? (isFarm ? <Sprout size={17} /> : <Check size={15} />) : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{isFarm ? 'Unlocked · Enter' : ownerPreview ? 'Owner Preview · Select' : 'Farm Level ' + world.level}</small></span></button>;
               })}
-              <div className="world-map-note"><Sparkles size={15} /><span>Keep growing, keep reflecting, and the world will open to you.</span></div>
+              <div className="world-map-note"><Sparkles size={15} /><span>{ownerPreview ? 'Owner Preview is active. Every destination is available for testing.' : 'Keep growing, keep reflecting, and the world will open to you.'}</span></div>
             </section>
           </div>
         )}
