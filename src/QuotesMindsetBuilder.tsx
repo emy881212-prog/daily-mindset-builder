@@ -682,15 +682,20 @@ function QuotesMindsetBuilder() {
 
         {section === 'map' && (
           <div className="world-map-page">
-            <section className="world-map-card glass-card" aria-label="World map with five garden destinations">
-              <img className="world-map-art" src="./resources/world-map.jpg" alt="Moonlit world map with Sunny Farm, Forest Garden, Orchard, Greenhouse, and Cozy Lake islands" draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map.jpg'; }} />
+            <section className="world-map-card glass-card" aria-label="World map with ten garden destinations">
+              <img className="world-map-art" src="./resources/world-map-v2.jpg" alt="Moonlit world map with ten garden destinations connected by glowing paths" draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map-v2.jpg'; }} />
               <div className="world-map-shade" />
               {[
                 { id: 'farm', name: 'Sunny Farm', level: 1 },
                 { id: 'forest', name: 'Forest Garden', level: 2 },
                 { id: 'orchard', name: 'Orchard', level: 3 },
-                { id: 'greenhouse', name: 'Greenhouse', level: 4 },
-                { id: 'lake', name: 'Cozy Lake', level: 5 },
+                { id: 'lavender', name: 'Lavender Meadow', level: 4 },
+                { id: 'crystal', name: 'Crystal Falls', level: 5 },
+                { id: 'village', name: 'Moonlit Village', level: 6 },
+                { id: 'greenhouse', name: 'Greenhouse', level: 7 },
+                { id: 'sunflower', name: 'Sunflower Hills', level: 8 },
+                { id: 'lake', name: 'Cozy Lake', level: 9 },
+                { id: 'cove', name: 'Starlight Cove', level: 10 },
               ].map((world) => {
                 const unlocked = world.id === 'farm';
                 return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? navigate('farm') : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Open ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? <Sprout size={17} /> : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{unlocked ? 'Unlocked · Enter' : 'Farm Level ' + world.level}</small></span></button>;

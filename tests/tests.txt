@@ -9,12 +9,12 @@ Steps:
 Expected: The supplied garden artwork is visible, all four beds are tappable, and the harvested carrot appears in Inventory.
 ## Test 2 - World map navigation and demo plans
 Viewport: mobile
-Description: The new World Map matches the cozy unlock design while every existing section remains reachable.
+Description: The expanded World Map has ten beautiful destinations while every existing section remains reachable.
 Steps:
-1. Open More, choose World Map, and confirm Sunny Farm, Forest Garden, Orchard, Greenhouse, and Cozy Lake
+1. Open More, choose World Map, and confirm ten destinations from Sunny Farm through Starlight Cove
 2. Select Sunny Farm and confirm the existing Farm opens
 3. Open Plans and select a demo plan
-Expected: The illustrated map shows one unlocked farm and four locked destinations, Farm is unchanged, and demo Plans still show no payment form.
+Expected: The illustrated map shows one unlocked farm and nine locked destinations, Farm is unchanged, and demo Plans still show no payment form.
 ## Test 3 - Local progress survives refresh
 Viewport: desktop
 Description: Saved progress remains available after a page reload.
