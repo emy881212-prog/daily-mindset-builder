@@ -298,8 +298,8 @@ function QuotesMindsetBuilder() {
   const storageCapacity = 20 + (state.upgrades.storage - 1) * 8 + state.store.storageBonus;
   const storageUsed = state.seeds + state.carrots + state.strawberries + state.wood;
   const backpackCapacity = 8 + state.upgrades.backpack * 4;
-  const readyCrops = state.plots.slice(0, state.upgrades.plotCount).filter((plot) => getPhase(plot, now, growthDuration) === 'ready').length;
-  const wateredCrops = state.plots.slice(0, state.upgrades.plotCount).filter((plot) => ['watered', 'sprout', 'growing'].includes(getPhase(plot, now, growthDuration))).length;
+  const readyCrops = state.plots.slice(0, 4).filter((plot) => getPhase(plot, now, growthDuration) === 'ready').length;
+  const wateredCrops = state.plots.slice(0, 4).filter((plot) => ['watered', 'sprout', 'growing'].includes(getPhase(plot, now, growthDuration))).length;
 
   const visibleQuotes = useMemo(
     () => (quoteFilter === 'All' ? quotes : quotes.filter((item) => item.category === quoteFilter)),
@@ -668,34 +668,11 @@ function QuotesMindsetBuilder() {
               <div><span className="farm-level">LV. {farmLevel}</span><div><strong>Moon Garden</strong><small>{levelProgress}/100 XP to the next level</small></div></div>
               <div className="farm-resources"><span><Wheat size={17} /> {state.seeds} seeds</span><span><Carrot size={17} /> {state.carrots} carrots</span></div>
             </section>
-            <section className="farm-field glass-card">
-              <div className="farm-sky"><span className="moon" /><i /><i /><i /><div className="hill hill-one" /><div className="hill hill-two" />{state.store.lantern && <div className="lantern"><Sparkles size={17} /></div>}</div>
-              <div className="plot-grid">
-                {state.plots.slice(0, state.upgrades.plotCount).map((plot) => {
-                  const phase = getPhase(plot, now, growthDuration);
-                  const progress = getProgress(plot, now, growthDuration);
-                  const seconds = plot.wateredAt ? Math.max(0, Math.ceil((growthDuration - (now - plot.wateredAt)) / 1000)) : 0;
-                  return (
-                    <article className={`farm-plot ${phase}`} key={plot.id}>
-                      <div className="plot-number">{plot.id + 1}</div>
-                      <PlantVisual phase={phase} />
-                      <div className="soil-lines"><span /><span /><span /></div>
-                      <div className="plot-action">
-                        {phase === 'empty' && <button onClick={() => plantPlot(plot.id)}><Plus size={15} /> Plant carrot</button>}
-                        {phase === 'dry' && <button className="water-action" onClick={() => waterPlot(plot.id)}><Droplets size={15} /> Water crop</button>}
-                        {['watered', 'sprout', 'growing'].includes(phase) && <><div className="growth-label"><Timer size={14} /> Growing · {seconds}s</div><div className="growth-track"><span style={{ width: `${progress}%` }} /></div></>}
-                        {phase === 'ready' && <button className="harvest-action" onClick={() => harvestPlot(plot.id)}><Carrot size={15} /> Harvest</button>}
-                      </div>
-                    </article>
-                  );
-                })}
-                {state.upgrades.plotCount < 8 && <button className="locked-plot" onClick={() => navigate('upgrades')}><Lock size={20} /><strong>New plot</strong><small>Unlock in Upgrades</small></button>}
-              </div>
-            </section>
+            <section className="garden-scene glass-card" aria-label="Interactive moonlit garden with four crop beds"><img className="garden-art" src="./resources/garden.jpg" alt="Cozy moonlit cottage garden with four soil beds beside a river" draggable={false} /><div className="garden-vignette" /><div className="garden-scene-hint"><Sparkles size={14} /><span>Tap a bed to plant and grow</span></div>{state.plots.slice(0, 4).map((plot) => { const phase = getPhase(plot, now, growthDuration); const progress = getProgress(plot, now, growthDuration); const seconds = plot.wateredAt ? Math.max(0, Math.ceil((growthDuration - (now - plot.wateredAt)) / 1000)) : 0; return <article className={'garden-bed garden-bed-' + (plot.id + 1) + ' ' + phase} key={plot.id} aria-label={'Garden bed ' + (plot.id + 1) + ', ' + phase}><span className="bed-number">{plot.id + 1}</span><div className="bed-plant"><PlantVisual phase={phase} /></div><div className="plot-action">{phase === 'empty' && <button onClick={() => plantPlot(plot.id)} aria-label={'Plant bed ' + (plot.id + 1)}><Plus size={15} /><span><b>Plant</b><small>Use 1 seed</small></span></button>}{phase === 'dry' && <button className="water-action" onClick={() => waterPlot(plot.id)} aria-label={'Water bed ' + (plot.id + 1)}><Droplets size={15} /><span><b>Water</b><small>Start growth</small></span></button>}{['watered', 'sprout', 'growing'].includes(phase) && <><button className="grow-action" onClick={() => notify('Your carrot is growing · ' + seconds + ' seconds remaining')} aria-label={'Check growth in bed ' + (plot.id + 1)}><Timer size={14} /><span><b>Grow</b><small>{seconds}s remaining</small></span></button><div className="growth-track"><span style={{ width: progress + '%' }} /></div></>}{phase === 'ready' && <button className="harvest-action" onClick={() => harvestPlot(plot.id)} aria-label={'Harvest bed ' + (plot.id + 1)}><Carrot size={15} /><span><b>Harvest</b><small>Collect carrot</small></span></button>}</div></article>; })}</section>
             <div className="farm-guide">
-              <span><i className="step-number">1</i><b>Plant</b><small>Use one seed</small></span><ArrowRight size={16} /><span><i className="step-number">2</i><b>Water</b><small>Start growth</small></span><ArrowRight size={16} /><span><i className="step-number">3</i><b>Wait</b><small>Watch it bloom</small></span><ArrowRight size={16} /><span><i className="step-number">4</i><b>Harvest</b><small>Fill inventory</small></span>
+              <span><i className="step-number">1</i><b>Plant</b><small>Use one seed</small></span><ArrowRight size={16} /><span><i className="step-number">2</i><b>Water</b><small>Start growth</small></span><ArrowRight size={16} /><span><i className="step-number">3</i><b>Grow</b><small>Watch it bloom</small></span><ArrowRight size={16} /><span><i className="step-number">4</i><b>Harvest</b><small>Fill inventory</small></span>
             </div>
-            {state.seeds === 0 && state.plots.slice(0, state.upgrades.plotCount).every((plot) => !plot.plantedAt) && <button className="loop-hint" onClick={() => navigate('journal')}><PenLine size={19} /><span><strong>Need your first seeds?</strong><small>Save a reflection to earn 3 carrot seeds.</small></span><ArrowRight size={18} /></button>}
+            {state.seeds === 0 && state.plots.slice(0, 4).every((plot) => !plot.plantedAt) && <button className="loop-hint" onClick={() => navigate('journal')}><PenLine size={19} /><span><strong>Need your first seeds?</strong><small>Save a reflection to earn 3 carrot seeds.</small></span><ArrowRight size={18} /></button>}
           </div>
         )}
 
@@ -719,7 +696,7 @@ function QuotesMindsetBuilder() {
               <UpgradeCard icon={Droplets} title="Watering can" level={state.upgrades.wateringCan} max={4} detail={`${Math.ceil(growthDuration / 1000)}s crop growth`} next="Grow crops 2 seconds faster" cost={45 + state.upgrades.wateringCan * 25} coins={state.coins} onBuy={() => buyUpgrade('wateringCan')} tone="blue" />
               <UpgradeCard icon={Backpack} title="Backpack size" level={state.upgrades.backpack} max={4} detail={`${backpackCapacity} carry slots`} next="Add 4 carrying slots" cost={50 + state.upgrades.backpack * 30} coins={state.coins} onBuy={() => buyUpgrade('backpack')} tone="purple" />
               <UpgradeCard icon={Archive} title="Farm storage" level={state.upgrades.storage} max={4} detail={`${storageCapacity} total slots`} next="Add 8 storage slots" cost={60 + state.upgrades.storage * 35} coins={state.coins} onBuy={() => buyUpgrade('storage')} tone="gold" />
-              <UpgradeCard icon={Sprout} title="Crop plots" level={state.upgrades.plotCount - 3} max={5} detail={`${state.upgrades.plotCount} active plots`} next="Unlock one new plot" cost={80 + (state.upgrades.plotCount - 3) * 45} coins={state.coins} onBuy={() => buyUpgrade('plotCount')} tone="green" />
+              <UpgradeCard icon={Sprout} title="Garden beds" level={4} max={4} detail="4 interactive beds" next="All garden beds unlocked" cost={0} coins={state.coins} onBuy={() => buyUpgrade('plotCount')} tone="green" />
             </div>
           </div>
         )}

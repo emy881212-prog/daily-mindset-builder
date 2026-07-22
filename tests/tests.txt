@@ -1,12 +1,12 @@
 # Tests
-## Test 1 - Reflection to harvest loop [sanity]
+## Test 1 - Real garden reflection-to-harvest loop [sanity]
 Viewport: mobile
-Description: A user can complete the core reward and farming loop.
+Description: The supplied moonlit garden contains exactly four interactive beds and supports the core reward loop.
 Steps:
 1. Open Journal, enter at least 10 characters, save the reflection, and confirm the reward popup
-2. Choose Plant in my garden, plant a carrot seed, water it, and wait until it is ready
+2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant, water, and grow a carrot
 3. Harvest the carrot and open Inventory
-Expected: The illustrated reward popup shows 3 seeds and 10 coins, and the harvested carrot appears in Inventory.
+Expected: The supplied garden artwork is visible, all four beds are tappable, and the harvested carrot appears in Inventory.
 ## Test 2 - Navigation and demo plans
 Viewport: mobile
 Description: Every requested section can be reached and subscription billing is clearly disabled.
@@ -20,6 +20,6 @@ Viewport: desktop
 Description: Saved progress remains available after a page reload.
 Steps:
 1. Save a journal reflection and a mood check-in
-2. Plant and water one crop
+2. Plant and water one of the four illustrated garden beds
 3. Refresh the page and revisit Journal, Mood, Farm, and Inventory
 Expected: Journal, mood, resources, farm state, upgrades, and inventory persist locally after refresh.
