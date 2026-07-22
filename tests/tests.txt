@@ -1,0 +1,25 @@
+# Tests
+## Test 1 - Reflection to harvest loop [sanity]
+Viewport: mobile
+Description: A user can complete the core reward and farming loop.
+Steps:
+1. Open Journal, enter at least 10 characters, and save the reflection
+2. Open Farm, plant a carrot seed, water it, and wait until it is ready
+3. Harvest the carrot and open Inventory
+Expected: The reflection grants 3 seeds and 10 coins, and the harvested carrot appears in Inventory.
+## Test 2 - Navigation and demo plans
+Viewport: mobile
+Description: Every requested section can be reached and subscription billing is clearly disabled.
+Steps:
+1. Use the bottom navigation and More menu to open each section
+2. Open Plans
+3. Select a demo plan
+Expected: Every section opens, demonstration mode remains visible, and no payment form appears.
+## Test 3 - Local progress survives refresh
+Viewport: desktop
+Description: Saved progress remains available after a page reload.
+Steps:
+1. Save a journal reflection and a mood check-in
+2. Plant and water one crop
+3. Refresh the page and revisit Journal, Mood, Farm, and Inventory
+Expected: Journal, mood, resources, farm state, upgrades, and inventory persist locally after refresh.
