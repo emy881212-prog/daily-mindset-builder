@@ -5,8 +5,8 @@ Description: The supplied moonlit garden contains exactly four interactive beds 
 Steps:
 1. Open Journal, enter at least 10 characters, save the reflection, and confirm the reward popup
 2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant and water one carrot
-3. Wait until the bed button says Harvest, select it once, then open Inventory
-Expected: The supplied garden artwork is visible, all four beds are tappable, and Inventory shows at least 1 harvested carrot.
+3. Wait until the bed button says Harvest, select it once, confirm the Farm dashboard carrot count increases to at least 1, then open Inventory and confirm the Harvested produce section appears
+Expected: The supplied garden artwork is visible, all four beds are tappable, the Farm dashboard confirms at least 1 harvested carrot, and Inventory opens with its Harvested produce section.
 ## Test 2 - Device-local Owner Preview and map navigation
 Viewport: mobile
 Description: The private Owner Preview unlocks all ten World Map destinations only in the active browser while every existing section remains reachable.
