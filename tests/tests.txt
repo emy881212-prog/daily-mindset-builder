@@ -7,14 +7,14 @@ Steps:
 2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant and water one carrot
 3. Wait until the bed button says Harvest, select it once, then open Inventory
 Expected: The supplied garden artwork is visible, all four beds are tappable, and Inventory shows at least 1 harvested carrot.
-## Test 2 - World map navigation and demo plans
+## Test 2 - Device-local Owner Preview and map navigation
 Viewport: mobile
-Description: The expanded World Map has ten beautiful destinations while every existing section remains reachable.
+Description: The private Owner Preview unlocks all ten World Map destinations only in the active browser while every existing section remains reachable.
 Steps:
-1. Open More, choose World Map, and confirm ten destinations from Sunny Farm through Starlight Cove
-2. Select Sunny Farm and confirm the existing Farm opens
-3. Open Plans and select a demo plan
-Expected: The illustrated map shows one unlocked farm and nine locked destinations, every mobile label stays inside its card, Farm is unchanged, and demo Plans show no payment form.
+1. Open the app with ?ownerPreview=enable and confirm the World Map opens with the Owner Preview banner
+2. Confirm all ten destinations from Sunny Farm through Starlight Cove are unlocked, every label stays inside its card, and selecting Starlight Cove shows a preview success notice
+3. Refresh, confirm Owner Preview remains active on this device, select Sunny Farm to open the unchanged Farm, then open Plans and select a demo plan
+Expected: Owner Preview persists locally, all ten map destinations respond for testing, normal progress is unchanged, every mobile label stays inside its card, and demo Plans show no payment form.
 ## Test 3 - Local progress survives refresh
 Viewport: desktop
 Description: Saved progress remains available after a page reload.
