@@ -12,9 +12,9 @@ Viewport: mobile
 Description: The private Owner Preview unlocks all ten World Map destinations only in the active browser while every existing section remains reachable.
 Steps:
 1. Open the app with ?ownerPreview=enable and confirm the World Map opens with the Owner Preview banner
-2. Confirm all ten destinations from Sunny Farm through Starlight Cove are unlocked, every label stays inside its card, and selecting Starlight Cove shows a preview success notice
-3. Refresh, confirm Owner Preview remains active on this device, select Sunny Farm to open the unchanged Farm, then open Plans and select a demo plan
-Expected: Owner Preview persists locally, all ten map destinations respond for testing, normal progress is unchanged, every mobile label stays inside its card, and demo Plans show no payment form.
+2. Confirm all ten destinations from Sunny Farm through Starlight Cove are unlocked and every label stays inside its card; enter Starlight Cove and confirm its full location view, landmark, activity, and World Map return button
+3. Return to the map, enter Forest Garden and confirm its distinct location view, then refresh, reopen World Map, confirm Owner Preview remains active, select Sunny Farm to open the unchanged Farm, and open Plans
+Expected: Owner Preview persists locally, every unlocked map node opens a real destination screen or the existing Sunny Farm, return navigation works, normal progress is unchanged, every mobile label stays inside its card, and demo Plans show no payment form.
 ## Test 3 - Local progress survives refresh
 Viewport: desktop
 Description: Saved progress remains available after a page reload.
