@@ -3,10 +3,10 @@
 Viewport: mobile
 Description: A user can complete the core reward and farming loop.
 Steps:
-1. Open Journal, enter at least 10 characters, and save the reflection
-2. Open Farm, plant a carrot seed, water it, and wait until it is ready
+1. Open Journal, enter at least 10 characters, save the reflection, and confirm the reward popup
+2. Choose Plant in my garden, plant a carrot seed, water it, and wait until it is ready
 3. Harvest the carrot and open Inventory
-Expected: The reflection grants 3 seeds and 10 coins, and the harvested carrot appears in Inventory.
+Expected: The illustrated reward popup shows 3 seeds and 10 coins, and the harvested carrot appears in Inventory.
 ## Test 2 - Navigation and demo plans
 Viewport: mobile
 Description: Every requested section can be reached and subscription billing is clearly disabled.
