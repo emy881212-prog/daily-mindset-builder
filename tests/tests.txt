@@ -7,14 +7,14 @@ Steps:
 2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant, water, and grow a carrot
 3. Harvest the carrot and open Inventory
 Expected: The supplied garden artwork is visible, all four beds are tappable, and the harvested carrot appears in Inventory.
-## Test 2 - Navigation and demo plans
+## Test 2 - World map navigation and demo plans
 Viewport: mobile
-Description: Every requested section can be reached and subscription billing is clearly disabled.
+Description: The new World Map matches the cozy unlock design while every existing section remains reachable.
 Steps:
-1. Use the bottom navigation and More menu to open each section
-2. Open Plans
-3. Select a demo plan
-Expected: Every section opens, demonstration mode remains visible, and no payment form appears.
+1. Open More, choose World Map, and confirm Sunny Farm, Forest Garden, Orchard, Greenhouse, and Cozy Lake
+2. Select Sunny Farm and confirm the existing Farm opens
+3. Open Plans and select a demo plan
+Expected: The illustrated map shows one unlocked farm and four locked destinations, Farm is unchanged, and demo Plans still show no payment form.
 ## Test 3 - Local progress survives refresh
 Viewport: desktop
 Description: Saved progress remains available after a page reload.

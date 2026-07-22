@@ -23,6 +23,7 @@ import {
   Home,
   Leaf,
   Lock,
+  Map,
   Meh,
   MoreHorizontal,
   Package,
@@ -50,6 +51,7 @@ type Section =
   | 'journal'
   | 'mood'
   | 'farm'
+  | 'map'
   | 'inventory'
   | 'upgrades'
   | 'store'
@@ -162,6 +164,7 @@ const navItems: NavItem[] = [
   { id: 'journal', label: 'Journal', icon: BookOpen },
   { id: 'mood', label: 'Mood', icon: Smile },
   { id: 'farm', label: 'Farm', icon: Sprout },
+  { id: 'map', label: 'World Map', icon: Map },
   { id: 'inventory', label: 'Inventory', icon: Package },
   { id: 'upgrades', label: 'Upgrades', icon: Wrench },
   { id: 'store', label: 'Store', icon: ShoppingBag },
@@ -467,6 +470,7 @@ function QuotesMindsetBuilder() {
     journal: { eyebrow: 'TODAY’S REFLECTION', title: 'Make space for yourself', subtitle: 'Your thoughts become seeds for the cozy farm.' },
     mood: { eyebrow: 'EMOTIONAL WEATHER', title: 'How are you feeling?', subtitle: 'No fixing required. Simply notice what is here.' },
     farm: { eyebrow: 'MINDFUL FARM', title: 'Your moonlit garden', subtitle: 'Plant what your reflections earn, then care for it slowly.' },
+    map: { eyebrow: 'WORLD MAP · UNLOCKS', title: 'Explore your growing world', subtitle: 'Keep reflecting and caring for your garden to discover new places.' },
     inventory: { eyebrow: 'COLLECTION', title: 'Farm inventory', subtitle: 'Everything you have grown, found and equipped.' },
     upgrades: { eyebrow: 'GROW WITH EASE', title: 'Farm upgrades', subtitle: 'Use earned coins to make caring for your garden smoother.' },
     store: { eyebrow: 'COZY MARKET', title: 'Farm store', subtitle: 'Use demo coins for seeds, space and a little beauty.' },
@@ -673,6 +677,26 @@ function QuotesMindsetBuilder() {
               <span><i className="step-number">1</i><b>Plant</b><small>Use one seed</small></span><ArrowRight size={16} /><span><i className="step-number">2</i><b>Water</b><small>Start growth</small></span><ArrowRight size={16} /><span><i className="step-number">3</i><b>Grow</b><small>Watch it bloom</small></span><ArrowRight size={16} /><span><i className="step-number">4</i><b>Harvest</b><small>Fill inventory</small></span>
             </div>
             {state.seeds === 0 && state.plots.slice(0, 4).every((plot) => !plot.plantedAt) && <button className="loop-hint" onClick={() => navigate('journal')}><PenLine size={19} /><span><strong>Need your first seeds?</strong><small>Save a reflection to earn 3 carrot seeds.</small></span><ArrowRight size={18} /></button>}
+          </div>
+        )}
+
+        {section === 'map' && (
+          <div className="world-map-page">
+            <section className="world-map-card glass-card" aria-label="World map with five garden destinations">
+              <img className="world-map-art" src="./resources/world-map.jpg" alt="Moonlit world map with Sunny Farm, Forest Garden, Orchard, Greenhouse, and Cozy Lake islands" draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map.jpg'; }} />
+              <div className="world-map-shade" />
+              {[
+                { id: 'farm', name: 'Sunny Farm', level: 1 },
+                { id: 'forest', name: 'Forest Garden', level: 2 },
+                { id: 'orchard', name: 'Orchard', level: 3 },
+                { id: 'greenhouse', name: 'Greenhouse', level: 4 },
+                { id: 'lake', name: 'Cozy Lake', level: 5 },
+              ].map((world) => {
+                const unlocked = world.id === 'farm';
+                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? navigate('farm') : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Open ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? <Sprout size={17} /> : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{unlocked ? 'Unlocked · Enter' : 'Farm Level ' + world.level}</small></span></button>;
+              })}
+              <div className="world-map-note"><Sparkles size={15} /><span>Keep growing, keep reflecting, and the world will open to you.</span></div>
+            </section>
           </div>
         )}
 
