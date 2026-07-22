@@ -104,6 +104,7 @@ interface AppState {
   plots: Plot[];
   cropsHarvested: number;
   farmXP: number;
+  farmLocation: WorldLocationId;
   upgrades: {
     wateringCan: number;
     backpack: number;
@@ -220,6 +221,7 @@ const initialState: AppState = {
   plots: emptyPlots,
   cropsHarvested: 0,
   farmXP: 0,
+  farmLocation: 'farm',
   upgrades: { wateringCan: 1, backpack: 1, storage: 1, plotCount: 4 },
   store: { lantern: false, overalls: false, storageBonus: 0 },
   plan: 'Free',
@@ -334,6 +336,7 @@ function QuotesMindsetBuilder() {
   const readyCrops = state.plots.slice(0, 4).filter((plot) => getPhase(plot, now, growthDuration) === 'ready').length;
   const wateredCrops = state.plots.slice(0, 4).filter((plot) => ['watered', 'sprout', 'growing'].includes(getPhase(plot, now, growthDuration))).length;
   const activeWorld = worldLocations.find((world) => world.id === activeWorldId) ?? worldLocations[1];
+  const activeFarmWorld = worldLocations.find((world) => world.id === state.farmLocation) ?? worldLocations[0];
 
   const visibleQuotes = useMemo(
     () => (quoteFilter === 'All' ? quotes : quotes.filter((item) => item.category === quoteFilter)),
@@ -355,6 +358,7 @@ function QuotesMindsetBuilder() {
   };
 
   const enterWorld = (worldId: WorldLocationId) => {
+    setState((current) => ({ ...current, farmLocation: worldId }));
     if (worldId === 'farm') {
       navigate('farm');
       return;
@@ -515,7 +519,7 @@ function QuotesMindsetBuilder() {
     quotes: { eyebrow: 'WORDS TO KEEP', title: 'Quote garden', subtitle: 'Find the words you need and keep your favorites close.' },
     journal: { eyebrow: 'TODAY’S REFLECTION', title: 'Make space for yourself', subtitle: 'Your thoughts become seeds for the cozy farm.' },
     mood: { eyebrow: 'EMOTIONAL WEATHER', title: 'How are you feeling?', subtitle: 'No fixing required. Simply notice what is here.' },
-    farm: { eyebrow: 'MINDFUL FARM', title: 'Your moonlit garden', subtitle: 'Plant what your reflections earn, then care for it slowly.' },
+    farm: { eyebrow: 'MINDFUL FARM · ' + activeFarmWorld.name.toUpperCase(), title: activeFarmWorld.id === 'farm' ? 'Your moonlit garden' : 'Your ' + activeFarmWorld.name + ' farm', subtitle: activeFarmWorld.id === 'farm' ? 'Plant what your reflections earn, then care for it slowly.' : 'Your four garden beds are now rooted in ' + activeFarmWorld.name + '.' },
     map: { eyebrow: 'WORLD MAP · UNLOCKS', title: 'Explore your growing world', subtitle: 'Keep reflecting and caring for your garden to discover new places.' },
     destination: { eyebrow: activeWorld.eyebrow, title: activeWorld.name, subtitle: activeWorld.tagline },
     inventory: { eyebrow: 'COLLECTION', title: 'Farm inventory', subtitle: 'Everything you have grown, found and equipped.' },
@@ -715,6 +719,12 @@ function QuotesMindsetBuilder() {
 
         {section === 'farm' && (
           <div className="farm-page">
+            <section className="farm-location-card glass-card" aria-label={'Current farm location: ' + activeFarmWorld.name}>
+              <img src="./resources/world-map-v2.jpg" alt={activeFarmWorld.name + ' farm location'} style={{ objectPosition: activeFarmWorld.position }} draggable={false} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = 'https://raw.githubusercontent.com/emy881212-prog/daily-mindset-builder/main/public/resources/world-map-v2.jpg'; }} />
+              <div className="farm-location-shade" />
+              <div className="farm-location-copy"><small><Map size={13} /> CURRENT FARM LOCATION</small><h2>{activeFarmWorld.name}</h2><p>{activeFarmWorld.tagline}</p><span><Star size={13} /> {activeFarmWorld.landmark}</span></div>
+              <button onClick={() => navigate('map')}><Map size={15} /> Change location</button>
+            </section>
             <section className="farm-toolbar glass-card">
               <div><span className="farm-level">LV. {farmLevel}</span><div><strong>Moon Garden</strong><small>{levelProgress}/100 XP to the next level</small></div></div>
               <div className="farm-resources"><span><Wheat size={17} /> {state.seeds} seeds</span><span><Carrot size={17} /> {state.carrots} carrots</span></div>
@@ -736,7 +746,7 @@ function QuotesMindsetBuilder() {
               {worldLocations.map((world) => {
                 const unlocked = world.level <= farmLevel || ownerPreview;
                 const isFarm = world.id === 'farm';
-                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? enterWorld(world.id) : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Enter ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? (isFarm ? <Sprout size={17} /> : <Check size={15} />) : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{isFarm ? 'Unlocked · Enter' : ownerPreview ? 'Owner Preview · Enter' : 'Unlocked · Enter'}</small></span></button>;
+                return <button key={world.id} className={'world-node world-node-' + world.id + (unlocked ? ' unlocked' : ' locked')} onClick={() => unlocked ? enterWorld(world.id) : notify(world.name + ' unlocks at Farm Level ' + world.level + '.', 'notice')} aria-label={unlocked ? 'Enter ' + world.name : world.name + ', locked until farm level ' + world.level}><span className="world-node-badge">{unlocked ? (isFarm ? <Sprout size={17} /> : <Check size={15} />) : <Lock size={15} />}</span><span><strong>{world.name}</strong><small>{state.farmLocation === world.id ? 'Current Farm · Enter' : isFarm ? 'Unlocked · Enter' : ownerPreview ? 'Owner Preview · Enter' : 'Unlocked · Enter'}</small></span></button>;
               })}
               <div className="world-map-note"><Sparkles size={15} /><span>{ownerPreview ? 'Owner Preview is active. Enter every destination to test it.' : 'Keep growing, keep reflecting, and the world will open to you.'}</span></div>
             </section>
@@ -760,7 +770,7 @@ function QuotesMindsetBuilder() {
               <article className="destination-detail glass-card"><span className="soft-icon"><Star size={20} /></span><div><small>SIGNATURE LANDMARK</small><strong>{activeWorld.landmark}</strong><p>Look around, slow down, and take in what makes this place unique.</p></div></article>
               <article className="destination-detail glass-card"><span className="soft-icon"><Leaf size={20} /></span><div><small>MINDFUL ACTIVITY</small><strong>{activeWorld.activity}</strong><p>A gentle moment designed for this part of your growing world.</p></div></article>
             </section>
-            <div className="destination-actions"><button onClick={() => notify(activeWorld.activity + ' · complete')}><Check size={16} /> Try this activity</button><button className="secondary" onClick={() => navigate('map')}><Map size={16} /> Explore another location</button></div>
+            <div className="destination-actions"><button onClick={() => navigate('farm')}><Sprout size={16} /> Open my farm here</button><button className="secondary" onClick={() => navigate('map')}><Map size={16} /> Explore another location</button></div>
           </div>
         )}
 
