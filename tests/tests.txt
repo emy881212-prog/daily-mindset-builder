@@ -4,9 +4,9 @@ Viewport: mobile
 Description: The supplied moonlit garden contains exactly four interactive beds and supports the core reward loop.
 Steps:
 1. Open Journal, enter at least 10 characters, save the reflection, and confirm the reward popup
-2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant, water, and grow a carrot
-3. Harvest the carrot and open Inventory
-Expected: The supplied garden artwork is visible, all four beds are tappable, and the harvested carrot appears in Inventory.
+2. Choose Plant in my garden, confirm four beds appear over the illustrated garden, then plant and water one carrot
+3. Wait until the bed button says Harvest, select it once, then open Inventory
+Expected: The supplied garden artwork is visible, all four beds are tappable, and Inventory shows at least 1 harvested carrot.
 ## Test 2 - World map navigation and demo plans
 Viewport: mobile
 Description: The expanded World Map has ten beautiful destinations while every existing section remains reachable.
