@@ -169,7 +169,7 @@ const navItems: NavItem[] = [
   { id: 'progress', label: 'Progress', icon: BarChart3 },
 ];
 
-const primaryMobile: Section[] = ['home', 'journal', 'farm', 'progress'];
+const primaryMobile: Section[] = ['home', 'quotes', 'farm', 'journal'];
 
 const moodOptions: Array<{
   id: MoodKey;
@@ -265,6 +265,7 @@ function QuotesMindsetBuilder() {
   const [state, setState] = useState<AppState>(loadState);
   const [section, setSection] = useState<Section>('home');
   const [moreOpen, setMoreOpen] = useState(false);
+  const [rewardOpen, setRewardOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [now, setNow] = useState(Date.now());
   const [quoteFilter, setQuoteFilter] = useState<'All' | QuoteCategory>('All');
@@ -335,7 +336,7 @@ function QuotesMindsetBuilder() {
       coinsEarned: current.coinsEarned + 10,
     }));
     setJournalText('');
-    notify('Reflection saved · +3 carrot seeds · +10 coins');
+    setRewardOpen(true);
   };
 
   const toggleFavorite = (id: string) => {
@@ -503,13 +504,14 @@ function QuotesMindsetBuilder() {
       </aside>
 
       <div className="mobile-topbar">
-        <button className="brand" onClick={() => navigate('home')} aria-label="Go home">
-          <span className="brand-mark"><Leaf size={19} /></span>
-          <span><strong>Mindset</strong><small>COZY GROWTH</small></span>
+        <button className="mobile-profile" onClick={() => navigate('home')} aria-label="Go home">
+          <span className="profile-bloom"><Flower2 size={19} /></span>
+          <span><small>WELCOME BACK</small><strong>Emy’s Garden</strong></span>
         </button>
-        <button className="resource-pill" onClick={() => navigate('store')} aria-label={`${state.coins} coins`}>
-          <Coins size={16} /> {state.coins}
-        </button>
+        <div className="mobile-resources">
+          <button onClick={() => navigate('store')} aria-label={`${state.coins} coins`}><Coins size={14} /> {state.coins}</button>
+          <button onClick={() => navigate('inventory')} aria-label={`${state.seeds} seeds`}><Wheat size={14} /> {state.seeds}</button>
+        </div>
       </div>
 
       <main className="main-content">
@@ -793,6 +795,26 @@ function QuotesMindsetBuilder() {
       </nav>
 
       {moreOpen && <div className="sheet-backdrop" onClick={() => setMoreOpen(false)}><section className="more-sheet" onClick={(event) => event.stopPropagation()}><div className="sheet-handle" /><div className="section-row"><div><p className="card-label">EXPLORE</p><h2>More spaces</h2></div><button className="icon-button" onClick={() => setMoreOpen(false)} aria-label="Close menu"><X size={19} /></button></div><div className="more-grid">{navItems.filter((item) => !primaryMobile.includes(item.id)).map((item) => { const Icon = item.icon; return <button key={item.id} className={section === item.id ? 'active' : ''} onClick={() => navigate(item.id)}><span><Icon size={21} /></span><strong>{item.label}</strong><small>{item.id === 'subscription' ? 'Demo only' : item.id === 'inventory' ? `${storageUsed}/${storageCapacity} used` : 'Open section'}</small></button>; })}</div></section></div>}
+
+      {rewardOpen && (
+        <div className="reward-backdrop" role="presentation" onClick={() => setRewardOpen(false)}>
+          <section className="reward-modal" role="dialog" aria-modal="true" aria-labelledby="reward-title" onClick={(event) => event.stopPropagation()}>
+            <button className="reward-close" onClick={() => setRewardOpen(false)} aria-label="Close reward"><X size={18} /></button>
+            <div className="reward-stars"><i /><i /><i /><i /><Sparkles size={21} /></div>
+            <p className="card-label">GREAT REFLECTION</p>
+            <h2 id="reward-title">You earned seeds!</h2>
+            <p>Your words planted something beautiful today.</p>
+            <div className="reward-bag"><span><Wheat size={39} /></span><i /><i /></div>
+            <div className="reward-items">
+              <div><span><Wheat size={20} /></span><strong>+3</strong><small>Carrot seeds</small></div>
+              <div><span><Coins size={20} /></span><strong>+10</strong><small>Coins</small></div>
+              <div><span><Flame size={20} /></span><strong>+1</strong><small>Streak day</small></div>
+            </div>
+            <button className="reward-button" onClick={() => { setRewardOpen(false); navigate('farm'); }}>Plant in my garden <Sprout size={17} /></button>
+            <button className="reward-later" onClick={() => setRewardOpen(false)}>Keep journaling</button>
+          </section>
+        </div>
+      )}
 
       {toast && <div className={`toast ${toast.kind}`} role="status">{toast.kind === 'success' ? <CircleCheck size={18} /> : <Sparkles size={18} />}<span>{toast.message}</span></div>}
     </div>
